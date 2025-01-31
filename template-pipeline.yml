@@ -63,7 +63,7 @@ steps:
 
 # Copy files to the build artifact staging directory
 - task: CopyFiles@2
-  displayName: 'Copy files for ${{ parameters.microservice }} to $(Build.ArtifactStagingDirectory)'
+ # displayName: 'Copy files for ${{ parameters.microservice }} to $(Build.ArtifactStagingDirectory)'
   inputs:
     Contents: |
       k8s/prod-manifests/${{ parameters.microservice }}.yaml
