@@ -1,12 +1,20 @@
+# .azure-pipelines/ui-pipeline.yml
 trigger:
-- main
+  branches:
+    include:
+      - main
+    
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
 
-extends:
-  template: template-pipeline.yml
+steps:
+- template: .azure-pipelines/template-pipeline.yml
   parameters:
-    microservice: 'ui'
-    dockerfilePath: 'ui/Dockerfile'
-    imageTagSuffix: '$(Build.BuildId)'
+    microserviceName: 'ui'  # The name of the microservice (could be different for other services)
+    dockerFilePath: 'ui/Dockerfile'  # Path to the Dockerfile for UI service
+    containerRegistry: 'voterg.azurecr.io'  # The Azure Container Registry
+    azureSubscription: 'test-aks-application12'  # The Azure subscription name
+    imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-ui:$(Build.BuildId)'  # The image name based on repo and branch
+
+# Additional UI-specific configuration if needed
