@@ -1,9 +1,7 @@
-# .azure-pipelines/ui-pipeline.yml
 trigger:
   branches:
     include:
       - main
-    
 
 pool:
   vmImage: ubuntu-latest
@@ -11,10 +9,7 @@ pool:
 steps:
 - template: template-pipeline.yml
   parameters:
-    microservice : 'users'  # The name of the microservice (could be different for other services)
-    dockerfilePath: 'users/Dockerfile'  # Path to the Dockerfile for UI service
-    #containerRegistry: 'voterg.azurecr.io'  # The Azure Container Registry
+    microservice: 'users'  # The name of the microservice
+    dockerfilePath: 'users/Dockerfile'  # Path to the Dockerfile for users service
     azureSubscription: 'test-aks-application12'  # The Azure subscription name
-    #imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-ui:$(Build.BuildId)'  # The image name based on repo and branch
-
-# Additional UI-specific configuration if needed
+    imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-users:$(Build.BuildId)'  # Image name
