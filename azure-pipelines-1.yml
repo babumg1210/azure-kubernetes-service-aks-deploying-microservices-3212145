@@ -1,0 +1,19 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: Docker@0
+  displayName: 'Build an image'
+  inputs:
+    azureSubscription: 'test-aks-application12'
+    azureContainerRegistry: '{"loginServer":"voterg.azurecr.io", "id" : "/subscriptions/a62b8882-3f1a-45ff-852f-3d4d1fe3ee13/resourceGroups/test-rg/providers/Microsoft.ContainerRegistry/registries/voterg"}'
+    dockerFile: ui/Dockerfile
+    imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-ui:$(Build.BuildId)'
