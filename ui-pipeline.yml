@@ -13,8 +13,8 @@ steps:
   parameters:
     microservice : 'ui'  # The name of the microservice (could be different for other services)
     dockerfilePath: 'ui/Dockerfile'  # Path to the Dockerfile for UI service
-    containerRegistry: 'voterg.azurecr.io'  # The Azure Container Registry
+    #containerRegistry: 'voterg.azurecr.io'  # The Azure Container Registry
     azureSubscription: 'test-aks-application12'  # The Azure subscription name
-    imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-ui:$(Build.BuildId)'  # The image name based on repo and branch
+    imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-$(microservice):$(Build.BuildId)'  # The image name based on repo and branch
 
 # Additional UI-specific configuration if needed
