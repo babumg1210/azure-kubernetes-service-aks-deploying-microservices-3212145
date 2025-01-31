@@ -46,7 +46,7 @@ steps:
       azureSubscription: ${{ parameters.azureSubscription }} 
       azureContainerRegistry: '{"loginServer":"voterg.azurecr.io", "id" : "/subscriptions/a62b8882-3f1a-45ff-852f-3d4d1fe3ee13/resourceGroups/test-rg/providers/Microsoft.ContainerRegistry/registries/voterg"}'
       action: 'Push an image'
-      imageName: ${{ parameters.imageName }}
+      imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-${{ parameters.microservice }}:$(Build.BuildId)
 
   # Replace image tag in manifest files after build
   - task: qetza.replacetokens.replacetokens-task.replacetokens@5
