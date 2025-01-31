@@ -1,6 +1,9 @@
 trigger:
 - main
 
+pool:
+  vmImage: ubuntu-latest
+
 extends:
   template: template-pipeline.yml
   parameters:
