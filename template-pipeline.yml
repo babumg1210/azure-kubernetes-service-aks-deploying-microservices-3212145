@@ -6,8 +6,8 @@ parameters:
   - name: imageTagSuffix
     type: string
     default: '$(Build.BuildId)'
-  - name: containerRegistry
-    type: string
+  # - name: containerRegistry
+  #   type: string
   - name: azureSubscription
     type: string
   - name: imageName
