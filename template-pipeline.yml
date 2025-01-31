@@ -6,8 +6,6 @@ parameters:
   - name: imageTagSuffix
     type: string
     default: '$(Build.BuildId)'
-  # - name: containerRegistry
-  #   type: string
   - name: azureSubscription
     type: string
   - name: imageName
@@ -60,7 +58,7 @@ steps:
     verbosity: off
     actionOnMissing: fail
     actionOnNoFiles: fail
-    defaultValue: 'voterg.azurecr.io/ ${{ parameters.imageName }}'
+    defaultValue: 'voterg.azurecr.io/${{ parameters.imageName }}'
 
 # Copy files to the build artifact staging directory
 - task: CopyFiles@2
