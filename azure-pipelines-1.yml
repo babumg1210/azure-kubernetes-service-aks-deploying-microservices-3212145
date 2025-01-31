@@ -10,6 +10,23 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
+- task: qetza.replacetokens.replacetokens-task.replacetokens@5
+  displayName: 'Replace tokens in k8s/prod-manifests/ui.yaml k8s/prod-manifests//ingress-service.yaml k8s/nats-eventhub.yaml ui/.env'
+  inputs:
+    targetFiles: |
+     k8s/prod-manifests/ui.yaml
+     k8s/prod-manifests//ingress-service.yaml
+     k8s/nats-eventhub.yaml
+     ui/.env
+    tokenPattern: custom
+    tokenPrefix: '--'
+    tokenSuffix: '--'
+    writeBOM: false
+    verbosity: off
+    actionOnMissing: fail
+    actionOnNoFiles: fail
+    defaultValue: '-$(Build.SourceBranchName)'
+  
 - task: Docker@0
   displayName: 'Build an image'
   inputs:
@@ -17,3 +34,37 @@ steps:
     azureContainerRegistry: '{"loginServer":"voterg.azurecr.io", "id" : "/subscriptions/a62b8882-3f1a-45ff-852f-3d4d1fe3ee13/resourceGroups/test-rg/providers/Microsoft.ContainerRegistry/registries/voterg"}'
     dockerFile: ui/Dockerfile
     imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-ui:$(Build.BuildId)'
+
+- task: Docker@0
+  displayName: 'Push an image'
+  inputs:
+    azureSubscription: 'test-aks-application12'
+    azureContainerRegistry: '{"loginServer":"voterg.azurecr.io", "id" : "/subscriptions/a62b8882-3f1a-45ff-852f-3d4d1fe3ee13/resourceGroups/test-rg/providers/Microsoft.ContainerRegistry/registries/voterg"}'
+    action: 'Push an image'
+    imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-ui:$(Build.BuildId)'
+    
+- task: qetza.replacetokens.replacetokens-task.replacetokens@5
+  displayName: 'Replace tokens in k8s/prod-manifests/ui.yaml'
+  inputs:
+    targetFiles: 'k8s/prod-manifests/ui.yaml'
+    tokenPattern: rm
+    writeBOM: false
+    verbosity: off
+    actionOnMissing: fail
+    actionOnNoFiles: fail
+    defaultValue: 'voterg.azurecr.io/$(Build.Repository.Name)-$(Build.SourceBranchName)-ui:$(Build.BuildId)'
+
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
+  inputs:
+    Contents: |
+     k8s/prod-manifests/ui.yaml
+     k8s/prod-manifests//ingress-service.yaml
+     k8s/nats-eventhub.yaml
+     ui/.env
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    OverWrite: true
+    flattenFolders: true
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'
