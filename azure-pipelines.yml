@@ -12,7 +12,7 @@ pool:
 steps:
 - task: Docker@2
   inputs:
-    containerRegistry: 'acr-sc'
+    containerRegistry: 'devpos-sc'
     repository: 'voterg'
     command: 'buildAndPush'
-    Dockerfile: '**/Dockerfile'
+    Dockerfile: '**/posts/Dockerfile'
