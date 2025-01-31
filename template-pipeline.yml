@@ -6,7 +6,12 @@ parameters:
   - name: imageTagSuffix
     type: string
     default: '$(Build.BuildId)'
-
+  - name: containerRegistry
+    type: string
+  - name: azureSubscription
+    type: string
+  - name: imageName
+    type: string
 steps:
 # Replace tokens in manifest files
 - task: qetza.replacetokens.replacetokens-task.replacetokens@5
