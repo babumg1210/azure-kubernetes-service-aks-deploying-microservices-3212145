@@ -9,10 +9,10 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- template: .azure-pipelines/template-pipeline.yml
+- template: template-pipeline.yml
   parameters:
-    microserviceName: 'ui'  # The name of the microservice (could be different for other services)
-    dockerFilePath: 'ui/Dockerfile'  # Path to the Dockerfile for UI service
+    microservice : 'ui'  # The name of the microservice (could be different for other services)
+    dockerfilePath: 'ui/Dockerfile'  # Path to the Dockerfile for UI service
     containerRegistry: 'voterg.azurecr.io'  # The Azure Container Registry
     azureSubscription: 'test-aks-application12'  # The Azure subscription name
     imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-ui:$(Build.BuildId)'  # The image name based on repo and branch
