@@ -14,7 +14,7 @@ parameters:
 steps:
   # Replace tokens in manifest files
   - task: qetza.replacetokens.replacetokens-task.replacetokens@5
-    displayName: 'Replace tokens in manifests for $(microservice)'
+    displayName: 'Replace image tag in manifests for $(microservice)'
     inputs:
       targetFiles: |
         k8s/prod-manifests/${{ parameters.microservice }}.yaml
