@@ -1,0 +1,9 @@
+trigger:
+- main
+
+extends:
+  template: template-pipeline.yml
+  parameters:
+    microservice: 'ui'
+    dockerfilePath: 'ui/Dockerfile'
+    imageTagSuffix: '$(Build.BuildId)'
