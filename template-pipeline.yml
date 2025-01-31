@@ -7,12 +7,6 @@ parameters:
     type: string
     default: '$(Build.BuildId)'
 
-trigger:
-- main
-
-pool:
-  vmImage: ubuntu-latest
-
 steps:
 # Replace tokens in manifest files
 - task: qetza.replacetokens.replacetokens-task.replacetokens@5
