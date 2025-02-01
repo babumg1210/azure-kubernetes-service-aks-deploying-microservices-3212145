@@ -26,13 +26,13 @@ jobs:
 
       - script: |
           echo "Checking for changes..."
-          git status  # Added for more debugging
+          git status  # Debugging: check git status to ensure changes are detected
           if [ $(git rev-list --count HEAD) -eq 1 ]; then
               echo "This is the first commit. No previous commit to compare."
               echo "##vso[task.setvariable variable=serviceToBuild;isOutput=true;]none"
           else
               changed_files=$(git diff --name-only HEAD~1 HEAD)
-              echo "Changed files: $changed_files"
+              echo "Changed files: $changed_files"  # Debugging: show changed files
               # Ensure the paths are matching the correct service directories
               changed_service=$(echo "$changed_files" | grep -E '^(ui|users|posts|comments)/' | cut -d'/' -f1 | uniq | head -n 1)
               if [ -z "$changed_service" ]; then
@@ -48,6 +48,7 @@ jobs:
 
       - script: |
           echo "Service to build set to: $(serviceToBuild)"
+          echo "##vso[task.setvariable variable=serviceToBuildFromJob;isOutput=true]$(serviceToBuild)"
         displayName: 'Debug Service to Build'
 
   - job: BuildComments
@@ -58,10 +59,9 @@ jobs:
       vmImage: 'ubuntu-latest'
     steps:
       - script: |
-          echo "Building Comments Service..."
-          # Add your build commands here
-        displayName: 'Build Comments Service'
-
+          echo "Service to build in BuildComments: $(serviceToBuild)"
+          echo "Service to build from DetermineService output: $(dependencies.DetermineService.outputs['DetermineService.serviceToBuild'])"
+        displayName: 'Debug Service to Build Comments'
       - template: template-pipeline.yml
         parameters:
           microservice: 'comments'
@@ -77,10 +77,9 @@ jobs:
       vmImage: 'ubuntu-latest'
     steps:
       - script: |
-          echo "Building Posts Service..."
-          # Add your build commands here
-        displayName: 'Build Posts Service'
-
+          echo "Service to build in BuildPosts: $(serviceToBuild)"
+          echo "Service to build from DetermineService output: $(dependencies.DetermineService.outputs['DetermineService.serviceToBuild'])"
+        displayName: 'Debug Service to Build Posts'
       - template: template-pipeline.yml
         parameters:
           microservice: 'posts'
@@ -96,10 +95,9 @@ jobs:
       vmImage: 'ubuntu-latest'
     steps:
       - script: |
-          echo "Building Users Service..."
-          # Add your build commands here
-        displayName: 'Build Users Service'
-
+          echo "Service to build in BuildUsers: $(serviceToBuild)"
+          echo "Service to build from DetermineService output: $(dependencies.DetermineService.outputs['DetermineService.serviceToBuild'])"
+        displayName: 'Debug Service to Build Users'
       - template: template-pipeline.yml
         parameters:
           microservice: 'users'
@@ -115,10 +113,9 @@ jobs:
       vmImage: 'ubuntu-latest'
     steps:
       - script: |
-          echo "Building UI Service..."
-          # Add your build commands here
-        displayName: 'Build UI Service'
-
+          echo "Service to build in BuildUI: $(serviceToBuild)"
+          echo "Service to build from DetermineService output: $(dependencies.DetermineService.outputs['DetermineService.serviceToBuild'])"
+        displayName: 'Debug Service to Build UI'
       - template: template-pipeline.yml
         parameters:
           microservice: 'ui'
