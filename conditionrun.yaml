@@ -1,0 +1,46 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - 'ui/*'
+      - 'users/*'
+      - 'posts/*'
+
+pool:
+  vmImage: ubuntu-latest
+
+jobs:
+  - job: BuildUI
+    displayName: 'Build UI Service'
+    condition: or(succeeded(), and(changed('ui/*'), not(startsWith(variables['Build.Reason'], 'PullRequest'))))
+    steps:
+      - template: template-pipeline.yml
+        parameters:
+          microservice: 'ui'
+          dockerfilePath: 'ui/Dockerfile'
+          azureSubscription: 'test-aks-application12'
+          imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-ui:$(Build.BuildId)'
+
+  - job: BuildUsers
+    displayName: 'Build Users Service'
+    condition: or(succeeded(), and(changed('users/*'), not(startsWith(variables['Build.Reason'], 'PullRequest'))))
+    steps:
+      - template: template-pipeline.yml
+        parameters:
+          microservice: 'users'
+          dockerfilePath: 'users/Dockerfile'
+          azureSubscription: 'test-aks-application12'
+          imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-users:$(Build.BuildId)'
+
+  - job: BuildPosts
+    displayName: 'Build Posts Service'
+    condition: or(succeeded(), and(changed('posts/*'), not(startsWith(variables['Build.Reason'], 'PullRequest'))))
+    steps:
+      - template: template-pipeline.yml
+        parameters:
+          microservice: 'posts'
+          dockerfilePath: 'posts/Dockerfile'
+          azureSubscription: 'test-aks-application12'
+          imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-posts:$(Build.BuildId)'
