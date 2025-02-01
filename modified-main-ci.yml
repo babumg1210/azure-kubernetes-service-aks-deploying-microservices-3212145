@@ -51,6 +51,7 @@ jobs:
 
   - job: BuildComments
     displayName: 'Build Comments Service'
+    dependsOn: DetermineService
     condition: and(succeeded(), eq(variables['serviceToBuild'], 'comments'))
     steps:
       - script: |
