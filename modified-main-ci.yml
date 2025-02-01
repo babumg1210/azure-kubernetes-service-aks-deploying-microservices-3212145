@@ -34,12 +34,14 @@ jobs:
               echo "Changed files: $changed_files"
               # Ensure the paths are matching the correct service directories
               changed_service=$(echo "$changed_files" | grep -E '^(ui|users|posts|comments)/' | cut -d'/' -f1 | uniq | head -n 1)
+              echo "Changed service: $changed_service"
               if [ -z "$changed_service" ]; then
                   echo "No relevant changes detected."
                   echo "##vso[task.setvariable variable=serviceToBuild;isOutput=true;]none"
               else
                   echo "Detected changes in: $changed_service"
                   serviceToBuildTrimmed=$(echo "$changed_service" | xargs)
+                  echo "Trimmed service to build: $serviceToBuildTrimmed"
                   echo "##vso[task.setvariable variable=serviceToBuild;isOutput=true;]$serviceToBuildTrimmed"
               fi
           fi
@@ -51,49 +53,4 @@ jobs:
           echo "Current build ID: $(Build.BuildId)"
           echo "Current repository: $(Build.Repository.Name)"
           echo "Current branch: $(Build.SourceBranchName)"
-        displayName:
-
-  # - job: BuildComments
-  #   displayName: 'Build Comments Service'
-  #   dependsOn: DetermineService
-  #   condition: eq(dependencies.DetermineService.outputs['DetermineService.serviceToBuild'], 'comments')
-  #   pool:
-  #     vmImage: 'ubuntu-latest'
-  #   steps:
-  #     - script: |
-  #         echo "Building Comments Service..."
-  #         echo "Service to build in BuildComments: $(serviceToBuild)"
-  #         # Add your build commands here
-  #       displayName: 'Build Comments Service'
-
-  #     - template: template-pipeline.yml
-  #       parameters:
-  #         microservice: 'comments'
-  #         dockerfilePath: 'comments/Dockerfile'
-  #         azureSubscription: 'test-aks-application12'
-  #         imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-comments:$(Build.BuildId)'
-
-  # - job: BuildPosts
-  #   displayName: 'Build Posts Service'
-  #   dependsOn: DetermineService
-  #   condition: eq(dependencies.DetermineService.outputs['DetermineService.serviceToBuild'], 'posts')
-  #   pool:
-  #     vmImage: 'ubuntu-latest'
-  #   steps:
-  #     - script: |
-  #         echo "Building Posts Service..."
-  #         echo "Service to build in BuildPosts: $(serviceToBuild)"
-  #         # Add your build commands here
-  #       displayName: 'Build Posts Service'
-
-  #     - template: template-pipeline.yml
-  #       parameters:
-  #         microservice: 'posts'
-  #         dockerfilePath: 'posts/Dockerfile'
-  #         azureSubscription: 'test-aks-application12'
-  #         imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-posts:$(Build.BuildId)'
-
-  # - job: BuildUsers
-  #   displayName: 'Build Users Service'
-  #   dependsOn: DetermineService
-  #   condition: eq(dependencies.DetermineService.outputs['DetermineService
+          echo "Final serviceToBuild: $(serviceToBuild)"
