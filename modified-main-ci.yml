@@ -22,8 +22,25 @@ jobs:
     pool:
       vmImage: 'ubuntu-latest'
     steps:
+      - checkout: self
+        fetchDepth: 0  # Fetch all history to avoid shallow clone issues
+
       - script: |
-          echo "##vso[task.setvariable variable=serviceToBuild]$(git diff --name-only HEAD^ HEAD | grep -E '^(ui|users|posts|comments)/' | cut -d'/' -f1 | uniq | head -n 1)"
+          # Check if this is the first commit
+          if [ $(git rev-list --count HEAD) -eq 1 ]; then
+              echo "This is the first commit. No previous commit to compare."
+              echo "##vso[task.setvariable variable=serviceToBuild]none"
+          else
+              # Determine which service has changed
+              changed_service=$(git diff --name-only HEAD^ HEAD | grep -E '^(ui|users|posts|comments)/' | cut -d'/' -f1 | uniq | head -n 1)
+              if [ -z "$changed_service" ]; then
+                  echo "No relevant changes detected."
+                  echo "##vso[task.setvariable variable=serviceToBuild]none"
+              else
+                  echo "Detected changes in: $changed_service"
+                  echo "##vso[task.setvariable variable=serviceToBuild]$changed_service"
+              fi
+          fi
         displayName: 'Determine Changed Service'
 
   - job: BuildUI
