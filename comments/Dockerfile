@@ -1,4 +1,4 @@
-# Install dependencies and build the source code DEFINE YOUR life lirert1234678919783461278
+# Install dependencies and build the source code DEFINE YOUR life lirert123467891978346127889
 FROM node:16-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
