@@ -6,7 +6,7 @@ trigger:
     include:
       - 'ui/*'  # Trigger pipeline when anything under 'ui/' changes
       - 'users/*'  # Trigger pipeline when anything under 'users/' changes
-      - 'posts/*'
+      - 'posts/*'  # Trigger pipeline when anything under 'posts/' changes
 
 pool:
   vmImage: ubuntu-latest
@@ -14,52 +14,45 @@ pool:
 jobs:
   - job: BuildUI
     displayName: 'Build UI Service'
-    condition: contains(variables['Build.SourceBranchName'], 'main')
-    steps:
-      - template: template-pipeline.yml
-        parameters:
-          microservice: 'ui'  # The name of the microservice (could be different for other services)
-          dockerfilePath: 'ui/Dockerfile'  # Path to the Dockerfile for UI service
-          azureSubscription: 'test-aks-application12'  # The Azure subscription name
-          imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-ui:$(Build.BuildId)'  # The image name based on repo and branch
-
-    # Path filter ensures this job only runs if changes are detected in the 'ui/' directory
     condition: |
       and(
         eq(variables['Build.SourceBranchName'], 'main'),
         contains(variables['Build.ChangedFiles'], 'ui/')
       )
-
-  - job: BuildUsers
-    displayName: 'Build Users Service'
-    condition: contains(variables['Build.SourceBranchName'], 'main')
     steps:
       - template: template-pipeline.yml
         parameters:
-          microservice: 'users'  # The name of the microservice (could be different for other services)
-          dockerfilePath: 'users/Dockerfile'  # Path to the Dockerfile for Users service
+          microservice: 'ui'  # The name of the microservice
+          dockerfilePath: 'ui/Dockerfile'  # Path to the Dockerfile for UI service
           azureSubscription: 'test-aks-application12'  # The Azure subscription name
-          imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-users:$(Build.BuildId)'  # The image name based on repo and branch
+          imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-ui:$(Build.BuildId)'  # The image name based on repo and branch
 
-    # Path filter ensures this job only runs if changes are detected in the 'users/' directory
+  - job: BuildUsers
+    displayName: 'Build Users Service'
     condition: |
       and(
         eq(variables['Build.SourceBranchName'], 'main'),
         contains(variables['Build.ChangedFiles'], 'users/')
       )
-  - job: BuildPosts
-    displayName: 'Build Posts Service'
-    condition: contains(variables['Build.SourceBranchName'], 'main')
     steps:
       - template: template-pipeline.yml
         parameters:
-          microservice: 'posts'  # The name of the microservice (could be different for other services)
-          dockerfilePath: 'posts/Dockerfile'  # Path to the Dockerfile for Users service
+          microservice: 'users'  # The name of the microservice
+          dockerfilePath: 'users/Dockerfile'  # Path to the Dockerfile for Users service
           azureSubscription: 'test-aks-application12'  # The Azure subscription name
-          imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-posts:$(Build.BuildId)'  # The image name based on repo and branch
+          imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-users:$(Build.BuildId)'  # The image name based on repo and branch
 
-    # Path filter ensures this job only runs if changes are detected in the 'posts/' directory
+  - job: BuildPosts
+    displayName: 'Build Posts Service'
     condition: |
       and(
         eq(variables['Build.SourceBranchName'], 'main'),
         contains(variables['Build.ChangedFiles'], 'posts/')
+      )
+    steps:
+      - template: template-pipeline.yml
+        parameters:
+          microservice: 'posts'  # The name of the microservice
+          dockerfilePath: 'posts/Dockerfile'  # Path to the Dockerfile for Posts service
+          azureSubscription: 'test-aks-application12'  # The Azure subscription name
+          imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-posts:$(Build.BuildId)'  # The image name based on repo and branch
