@@ -15,10 +15,7 @@ jobs:
   - job: BuildUI
     displayName: 'Build UI Service'
     condition: |
-      and(
-        eq(variables['Build.SourceBranchName'], 'main'),
-        contains(variables['Build.ChangedFiles'], 'ui/')
-      )
+      eq(variables['Build.SourceBranchName'], 'main')
     steps:
       - template: template-pipeline.yml
         parameters:
@@ -30,10 +27,7 @@ jobs:
   - job: BuildUsers
     displayName: 'Build Users Service'
     condition: |
-      and(
-        eq(variables['Build.SourceBranchName'], 'main'),
-        contains(variables['Build.ChangedFiles'], 'users/')
-      )
+      eq(variables['Build.SourceBranchName'], 'main')
     steps:
       - template: template-pipeline.yml
         parameters:
@@ -45,10 +39,7 @@ jobs:
   - job: BuildPosts
     displayName: 'Build Posts Service'
     condition: |
-      and(
-        eq(variables['Build.SourceBranchName'], 'main'),
-        contains(variables['Build.ChangedFiles'], 'posts/')
-      )
+      eq(variables['Build.SourceBranchName'], 'main')
     steps:
       - template: template-pipeline.yml
         parameters:
