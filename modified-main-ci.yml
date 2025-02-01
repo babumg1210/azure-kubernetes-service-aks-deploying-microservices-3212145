@@ -34,15 +34,12 @@ jobs:
               echo "Changed files: $changed_files"
               # Ensure the paths are matching the correct service directories
               changed_service=$(echo "$changed_files" | grep -E '^(ui|users|posts|comments)/' | cut -d'/' -f1 | uniq | head -n 1)
-              echo "Changed service: $changed_service"
               if [ -z "$changed_service" ]; then
                   echo "No relevant changes detected."
                   echo "##vso[task.setvariable variable=serviceToBuild;isOutput=true;]none"
               else
                   echo "Detected changes in: $changed_service"
-                  serviceToBuildTrimmed=$(echo "$changed_service" | xargs)
-                  echo "Trimmed service to build: $serviceToBuildTrimmed"
-                  echo "##vso[task.setvariable variable=serviceToBuild;isOutput=true;]$serviceToBuildTrimmed"
+                  echo "##vso[task.setvariable variable=serviceToBuild;isOutput=true;]$changed_service"
               fi
           fi
         displayName: 'Determine Changed Service'
@@ -54,3 +51,4 @@ jobs:
           echo "Current repository: $(Build.Repository.Name)"
           echo "Current branch: $(Build.SourceBranchName)"
           echo "Final serviceToBuild: $(serviceToBuild)"
+        displayName: 'Debug Service to Build'
