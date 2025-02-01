@@ -13,7 +13,6 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  # Initialize a variable to track which service should be built
   serviceToBuild: ''
 
 jobs:
@@ -26,12 +25,10 @@ jobs:
         fetchDepth: 0  # Fetch all history to avoid shallow clone issues
 
       - script: |
-          # Check if this is the first commit
           if [ $(git rev-list --count HEAD) -eq 1 ]; then
               echo "This is the first commit. No previous commit to compare."
               echo "##vso[task.setvariable variable=serviceToBuild]none"
           else
-              # Determine which service has changed
               changed_service=$(git diff --name-only HEAD^ HEAD | grep -E '^(ui|users|posts|comments)/' | cut -d'/' -f1 | uniq | head -n 1)
               if [ -z "$changed_service" ]; then
                   echo "No relevant changes detected."
@@ -43,46 +40,17 @@ jobs:
           fi
         displayName: 'Determine Changed Service'
 
-  - job: BuildUI
-    displayName: 'Build UI Service'
-    condition: and(succeeded(), eq(variables['serviceToBuild'], 'ui'))
-    steps:
-      - template: template-pipeline.yml
-        parameters:
-          microservice: 'ui'
-          dockerfilePath: 'ui/Dockerfile'
-          azureSubscription: 'test-aks-application12'
-          imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-ui:$(Build.BuildId)'
-
-  - job: BuildUsers
-    displayName: 'Build Users Service'
-    condition: and(succeeded(), eq(variables['serviceToBuild'], 'users'))
-    steps:
-      - template: template-pipeline.yml
-        parameters:
-          microservice: 'users'
-          dockerfilePath: 'users/Dockerfile'
-          azureSubscription: 'test-aks-application12'
-          imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-users:$(Build.BuildId)'
-
-  - job: BuildPosts
-    displayName: 'Build Posts Service'
-    condition: and(succeeded(), eq(variables['serviceToBuild'], 'posts'))
-    steps:
-      - template: template-pipeline.yml
-        parameters:
-          microservice: 'posts'
-          dockerfilePath: 'posts/Dockerfile'
-          azureSubscription: 'test-aks-application12'
-          imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-posts:$(Build.BuildId)'
-
   - job: BuildComments
     displayName: 'Build Comments Service'
     condition: and(succeeded(), eq(variables['serviceToBuild'], 'comments'))
     steps:
+      - script: |
+          echo "Service to build: $(serviceToBuild)"
+        displayName: 'Debug Service to Build'
       - template: template-pipeline.yml
         parameters:
           microservice: 'comments'
           dockerfilePath: 'comments/Dockerfile'
           azureSubscription: 'test-aks-application12'
           imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-comments:$(Build.BuildId)'
+
