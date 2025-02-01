@@ -15,16 +15,8 @@ pool:
 jobs:
   - job: BuildUI
     displayName: 'Build UI Service'
-    condition: and(contains(variables['ChangedFiles'], 'ui/'), eq(variables['Build.SourceBranchName'], 'main'))
+    condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'ui/'))
     steps:
-      - script: |
-          git fetch --prune --unshallow
-          echo "Checking if UI files changed..."
-          changedFiles=$(git diff --name-only $BUILD_SOURCEVERSION^ $BUILD_SOURCEVERSION)
-          echo "Changed files: $changedFiles"
-          echo "##vso[task.setvariable variable=ChangedFiles;]$changedFiles"
-        displayName: 'Get Changed Files for UI'
-      
       - template: template-pipeline.yml
         parameters:
           microservice: 'ui'
@@ -34,16 +26,8 @@ jobs:
 
   - job: BuildUsers
     displayName: 'Build Users Service'
-    condition: and(contains(variables['ChangedFiles'], 'users/'), eq(variables['Build.SourceBranchName'], 'main'))
+    condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'users/'))
     steps:
-      - script: |
-          git fetch --prune --unshallow
-          echo "Checking if Users files changed..."
-          changedFiles=$(git diff --name-only $BUILD_SOURCEVERSION^ $BUILD_SOURCEVERSION)
-          echo "Changed files: $changedFiles"
-          echo "##vso[task.setvariable variable=ChangedFiles;]$changedFiles"
-        displayName: 'Get Changed Files for Users'
-
       - template: template-pipeline.yml
         parameters:
           microservice: 'users'
@@ -53,16 +37,8 @@ jobs:
 
   - job: BuildPosts
     displayName: 'Build Posts Service'
-    condition: and(contains(variables['ChangedFiles'], 'posts/'), eq(variables['Build.SourceBranchName'], 'main'))
+    condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'posts/'))
     steps:
-      - script: |
-          git fetch --prune --unshallow
-          echo "Checking if Posts files changed..."
-          changedFiles=$(git diff --name-only $BUILD_SOURCEVERSION^ $BUILD_SOURCEVERSION)
-          echo "Changed files: $changedFiles"
-          echo "##vso[task.setvariable variable=ChangedFiles;]$changedFiles"
-        displayName: 'Get Changed Files for Posts'
-
       - template: template-pipeline.yml
         parameters:
           microservice: 'posts'
@@ -72,16 +48,8 @@ jobs:
 
   - job: BuildComments
     displayName: 'Build Comments Service'
-    condition: and(contains(variables['ChangedFiles'], 'comments/'), eq(variables['Build.SourceBranchName'], 'main'))
+    condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'comments/'))
     steps:
-      - script: |
-          git fetch --prune --unshallow
-          echo "Checking if Comments files changed..."
-          changedFiles=$(git diff --name-only $BUILD_SOURCEVERSION^ $BUILD_SOURCEVERSION)
-          echo "Changed files: $changedFiles"
-          echo "##vso[task.setvariable variable=ChangedFiles;]$changedFiles"
-        displayName: 'Get Changed Files for Comments'
-
       - template: template-pipeline.yml
         parameters:
           microservice: 'comments'
