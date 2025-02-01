@@ -13,7 +13,7 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  serviceToBuild: ''
+  serviceToBuild: ''  # Default to empty, will be set in the first job
 
 jobs:
   - job: DetermineService
@@ -28,7 +28,7 @@ jobs:
           echo "Checking for changes..."
           if [ $(git rev-list --count HEAD) -eq 1 ]; then
               echo "This is the first commit. No previous commit to compare."
-              echo "##vso[task.setvariable variable=serviceToBuild;]none"
+              echo "##vso[task.setvariable variable=serviceToBuild;isOutput=true;]none"
           else
               changed_files=$(git diff --name-only HEAD~1 HEAD)
               echo "Changed files: $changed_files"
@@ -36,17 +36,18 @@ jobs:
               changed_service=$(echo "$changed_files" | grep -E '^(ui|users|posts|comments)/' | cut -d'/' -f1 | uniq | head -n 1)
               if [ -z "$changed_service" ]; then
                   echo "No relevant changes detected."
-                  echo "##vso[task.setvariable variable=serviceToBuild;]none"
+                  echo "##vso[task.setvariable variable=serviceToBuild;isOutput=true;]none"
               else
                   echo "Detected changes in: $changed_service"
                   serviceToBuildTrimmed=$(echo "$changed_service" | xargs)
-                  echo "##vso[task.setvariable variable=serviceToBuild;]$serviceToBuildTrimmed"
+                  echo "##vso[task.setvariable variable=serviceToBuild;isOutput=true;]$serviceToBuildTrimmed"
               fi
           fi
         displayName: 'Determine Changed Service'
 
       - script: |
           echo "Service to build set to: $(serviceToBuild)"
+          echo "##vso[task.setvariable variable=serviceToBuildFromJob;isOutput=true]$(serviceToBuild)"
           echo "Current build ID: $(Build.BuildId)"
           echo "Current repository: $(Build.Repository.Name)"
           echo "Current branch: $(Build.SourceBranchName)"
@@ -55,12 +56,12 @@ jobs:
   - job: BuildComments
     displayName: 'Build Comments Service'
     dependsOn: DetermineService
-    condition: and(succeeded(), eq(variables['serviceToBuild'], 'comments'))
+    condition: and(succeeded(), eq(${{ dependencies.DetermineService.outputs['DetermineService.serviceToBuildFromJob'] }}, 'comments'))
     pool:
       vmImage: 'ubuntu-latest'
     steps:
       - script: |
-          echo "Service to build in BuildComments: $(serviceToBuild)"
+          echo "Service to build in BuildComments: ${{ dependencies.DetermineService.outputs['DetermineService.serviceToBuildFromJob'] }}"
         displayName: 'Debug Service to Build Comments'
       - template: template-pipeline.yml
         parameters:
@@ -72,12 +73,12 @@ jobs:
   - job: BuildPosts
     displayName: 'Build Posts Service'
     dependsOn: DetermineService
-    condition: and(succeeded(), eq(variables['serviceToBuild'], 'posts'))
+    condition: and(succeeded(), eq(${{ dependencies.DetermineService.outputs['DetermineService.serviceToBuildFromJob'] }}, 'posts'))
     pool:
       vmImage: 'ubuntu-latest'
     steps:
       - script: |
-          echo "Service to build in BuildPosts: $(serviceToBuild)"
+          echo "Service to build in BuildPosts: ${{ dependencies.DetermineService.outputs['DetermineService.serviceToBuildFromJob'] }}"
         displayName: 'Debug Service to Build Posts'
       - template: template-pipeline.yml
         parameters:
@@ -89,12 +90,12 @@ jobs:
   - job: BuildUsers
     displayName: 'Build Users Service'
     dependsOn: DetermineService
-    condition: and(succeeded(), eq(variables['serviceToBuild'], 'users'))
+    condition: and(succeeded(), eq(${{ dependencies.DetermineService.outputs['DetermineService.serviceToBuildFromJob'] }}, 'users'))
     pool:
       vmImage: 'ubuntu-latest'
     steps:
       - script: |
-          echo "Service to build in BuildUsers: $(serviceToBuild)"
+          echo "Service to build in BuildUsers: ${{ dependencies.DetermineService.outputs['DetermineService.serviceToBuildFromJob'] }}"
         displayName: 'Debug Service to Build Users'
       - template: template-pipeline.yml
         parameters:
@@ -106,12 +107,12 @@ jobs:
   - job: BuildUI
     displayName: 'Build UI Service'
     dependsOn: DetermineService
-    condition: and(succeeded(), eq(variables['serviceToBuild'], 'ui'))
+    condition: and(succeeded(), eq(${{ dependencies.DetermineService.outputs['DetermineService.serviceToBuildFromJob'] }}, 'ui'))
     pool:
       vmImage: 'ubuntu-latest'
     steps:
       - script: |
-          echo "Service to build in BuildUI: $(serviceToBuild)"
+          echo "Service to build in BuildUI: ${{ dependencies.DetermineService.outputs['DetermineService.serviceToBuildFromJob'] }}"
         displayName: 'Debug Service to Build UI'
       - template: template-pipeline.yml
         parameters:
