@@ -25,11 +25,17 @@ jobs:
         fetchDepth: 0  # Fetch all history to avoid shallow clone issues
 
       - script: |
+          echo "Checking for changes..."
+          # Check if this is the first commit
           if [ $(git rev-list --count HEAD) -eq 1 ]; then
               echo "This is the first commit. No previous commit to compare."
               echo "##vso[task.setvariable variable=serviceToBuild]none"
           else
-              changed_service=$(git diff --name-only HEAD^ HEAD | grep -E '^(ui|users|posts|comments)/' | cut -d'/' -f1 | uniq | head -n 1)
+              # Get the list of changed files
+              changed_files=$(git diff --name-only HEAD~1 HEAD)
+              echo "Changed files: $changed_files"
+              # Determine which service has changed
+              changed_service=$(echo "$changed_files" | grep -E '^(ui|users|posts|comments)/' | cut -d'/' -f1 | uniq | head -n 1)
               if [ -z "$changed_service" ]; then
                   echo "No relevant changes detected."
                   echo "##vso[task.setvariable variable=serviceToBuild]none"
@@ -39,6 +45,10 @@ jobs:
               fi
           fi
         displayName: 'Determine Changed Service'
+
+      - script: |
+          echo "Service to build: $(serviceToBuild)"
+        displayName: 'Debug Service to Build'
 
   - job: BuildComments
     displayName: 'Build Comments Service'
