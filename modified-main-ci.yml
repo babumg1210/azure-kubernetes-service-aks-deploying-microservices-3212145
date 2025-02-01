@@ -62,7 +62,7 @@ jobs:
     steps:
       - script: |
           echo "Service to build in BuildComments: $(serviceToBuild)"
-          echo "Service to build from job output: $(serviceToBuildFromJob)"
+          echo "Service to build from job output: $(dependencies.DetermineService.outputs['DetermineService.serviceToBuildFromJob'])"
         displayName: 'Debug Service to Build Comments'
       - template: template-pipeline.yml
         parameters:
@@ -80,7 +80,7 @@ jobs:
     steps:
       - script: |
           echo "Service to build in BuildPosts: $(serviceToBuild)"
-          echo "Service to build from job output: $(serviceToBuildFromJob)"
+          echo "Service to build from job output: $(dependencies.DetermineService.outputs['DetermineService.serviceToBuildFromJob'])"
         displayName: 'Debug Service to Build Posts'
       - template: template-pipeline.yml
         parameters:
@@ -98,7 +98,7 @@ jobs:
     steps:
       - script: |
           echo "Service to build in BuildUsers: $(serviceToBuild)"
-          echo "Service to build from job output: $(serviceToBuildFromJob)"
+          echo "Service to build from job output: $(dependencies.DetermineService.outputs['DetermineService.serviceToBuildFromJob'])"
         displayName: 'Debug Service to Build Users'
       - template: template-pipeline.yml
         parameters:
@@ -116,7 +116,7 @@ jobs:
     steps:
       - script: |
           echo "Service to build in BuildUI: $(serviceToBuild)"
-          echo "Service to build from job output: $(serviceToBuildFromJob)"
+          echo "Service to build from job output: $(dependencies.DetermineService.outputs['DetermineService.serviceToBuildFromJob'])"
         displayName: 'Debug Service to Build UI'
       - template: template-pipeline.yml
         parameters:
