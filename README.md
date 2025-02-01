@@ -2,7 +2,7 @@
 This is the repository for the LinkedIn Learning course Azure Kubernetes Service (AKS): Deploying Microservices. The full course is available from [LinkedIn Learning][lil-course-url].
 
 As a devops engineer, developer, cloud admin, or system admin, you may need to deploy production AKS clusters and microservices via an orchestrator (AKS). This course has you covered. Instructor Prince Mokut introduces the basics of packaging microservices into images that can be deployed locally as a standalone docker container or in Azure Kubernetes, a cloud-managed orchestrator that helps you manage multiple container resources. Prince guides you through the process of securing access to your Azure Kubernetes Cluster, as well as the microservices in a production environment. He explains how to use CI/CD pipelines to automate deployment, as this helps you manage deployments of several applications. At the end of the course, you will know how to deploy a secure AKS integrated with Azure Application Gateway to securely expose your APIs, as well as how to fully automate deployment processes of container images for your development team.
-
+#sudha
 ## Instructions
 This repository has branches for each of the videos in the course. You can use the branch pop up menu in github to switch to a specific branch and take a look at the course at that stage, or you can add `/tree/BRANCH_NAME` to the URL to go to the branch you want to access.
 
