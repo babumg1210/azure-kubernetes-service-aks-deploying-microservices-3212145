@@ -1,0 +1,43 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - 'ui/*'  # Trigger pipeline when anything under 'ui/' changes
+      - 'users/*'  # Trigger pipeline when anything under 'users/' changes
+      - 'posts/*'  # Trigger pipeline when anything under 'posts/' changes
+
+pool:
+  vmImage: ubuntu-latest
+
+jobs:
+  - job: BuildUI
+    displayName: 'Build UI Service'
+    steps:
+      - template: template-pipeline.yml
+        parameters:
+          microservice: 'ui'
+          dockerfilePath: 'ui/Dockerfile'
+          azureSubscription: 'test-aks-application12'
+          imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-ui:$(Build.BuildId)'
+
+  - job: BuildUsers
+    displayName: 'Build Users Service'
+    steps:
+      - template: template-pipeline.yml
+        parameters:
+          microservice: 'users'
+          dockerfilePath: 'users/Dockerfile'
+          azureSubscription: 'test-aks-application12'
+          imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-users:$(Build.BuildId)'
+
+  - job: BuildPosts
+    displayName: 'Build Posts Service'
+    steps:
+      - template: template-pipeline.yml
+        parameters:
+          microservice: 'posts'
+          dockerfilePath: 'posts/Dockerfile'
+          azureSubscription: 'test-aks-application12'
+          imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-posts:$(Build.BuildId)'
