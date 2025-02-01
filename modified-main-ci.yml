@@ -18,6 +18,7 @@ jobs:
     condition: and(contains(variables['ChangedFiles'], 'ui/'), eq(variables['Build.SourceBranchName'], 'main'))
     steps:
       - script: |
+          git fetch --prune --unshallow
           echo "Checking if UI files changed..."
           changedFiles=$(git diff --name-only $BUILD_SOURCEVERSION^ $BUILD_SOURCEVERSION)
           echo "Changed files: $changedFiles"
@@ -36,6 +37,7 @@ jobs:
     condition: and(contains(variables['ChangedFiles'], 'users/'), eq(variables['Build.SourceBranchName'], 'main'))
     steps:
       - script: |
+          git fetch --prune --unshallow
           echo "Checking if Users files changed..."
           changedFiles=$(git diff --name-only $BUILD_SOURCEVERSION^ $BUILD_SOURCEVERSION)
           echo "Changed files: $changedFiles"
@@ -54,6 +56,7 @@ jobs:
     condition: and(contains(variables['ChangedFiles'], 'posts/'), eq(variables['Build.SourceBranchName'], 'main'))
     steps:
       - script: |
+          git fetch --prune --unshallow
           echo "Checking if Posts files changed..."
           changedFiles=$(git diff --name-only $BUILD_SOURCEVERSION^ $BUILD_SOURCEVERSION)
           echo "Changed files: $changedFiles"
@@ -72,6 +75,7 @@ jobs:
     condition: and(contains(variables['ChangedFiles'], 'comments/'), eq(variables['Build.SourceBranchName'], 'main'))
     steps:
       - script: |
+          git fetch --prune --unshallow
           echo "Checking if Comments files changed..."
           changedFiles=$(git diff --name-only $BUILD_SOURCEVERSION^ $BUILD_SOURCEVERSION)
           echo "Changed files: $changedFiles"
@@ -84,4 +88,3 @@ jobs:
           dockerfilePath: 'comments/Dockerfile'
           azureSubscription: 'test-aks-application12'
           imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-comments:$(Build.BuildId)'
-
