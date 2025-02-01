@@ -59,9 +59,10 @@ jobs:
       vmImage: 'ubuntu-latest'
     steps:
       - script: |
-          echo "Service to build in BuildComments: $(serviceToBuild)"
+          echo "Building Comments Service..."
           echo "Service to build from DetermineService output: $(dependencies.DetermineService.outputs['DetermineService.serviceToBuild'])"
-        displayName: 'Debug Service to Build Comments'
+        displayName: 'Build Comments Service'
+
       - template: template-pipeline.yml
         parameters:
           microservice: 'comments'
@@ -77,9 +78,10 @@ jobs:
       vmImage: 'ubuntu-latest'
     steps:
       - script: |
-          echo "Service to build in BuildPosts: $(serviceToBuild)"
+          echo "Building Posts Service..."
           echo "Service to build from DetermineService output: $(dependencies.DetermineService.outputs['DetermineService.serviceToBuild'])"
-        displayName: 'Debug Service to Build Posts'
+        displayName: 'Build Posts Service'
+
       - template: template-pipeline.yml
         parameters:
           microservice: 'posts'
@@ -95,9 +97,10 @@ jobs:
       vmImage: 'ubuntu-latest'
     steps:
       - script: |
-          echo "Service to build in BuildUsers: $(serviceToBuild)"
+          echo "Building Users Service..."
           echo "Service to build from DetermineService output: $(dependencies.DetermineService.outputs['DetermineService.serviceToBuild'])"
-        displayName: 'Debug Service to Build Users'
+        displayName: 'Build Users Service'
+
       - template: template-pipeline.yml
         parameters:
           microservice: 'users'
@@ -113,9 +116,10 @@ jobs:
       vmImage: 'ubuntu-latest'
     steps:
       - script: |
-          echo "Service to build in BuildUI: $(serviceToBuild)"
+          echo "Building UI Service..."
           echo "Service to build from DetermineService output: $(dependencies.DetermineService.outputs['DetermineService.serviceToBuild'])"
-        displayName: 'Debug Service to Build UI'
+        displayName: 'Build UI Service'
+
       - template: template-pipeline.yml
         parameters:
           microservice: 'ui'
