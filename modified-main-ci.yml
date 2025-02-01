@@ -7,6 +7,7 @@ trigger:
       - 'ui/*'  # Trigger pipeline when anything under 'ui/' changes
       - 'users/*'  # Trigger pipeline when anything under 'users/' changes
       - 'posts/*'  # Trigger pipeline when anything under 'posts/' changes
+      - 'comments/*'  # Trigger pipeline when anything under 'comments/' changes
 
 pool:
   vmImage: ubuntu-latest
@@ -14,6 +15,7 @@ pool:
 jobs:
   - job: BuildUI
     displayName: 'Build UI Service'
+    condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'ui/*'))
     steps:
       - template: template-pipeline.yml
         parameters:
@@ -24,6 +26,7 @@ jobs:
 
   - job: BuildUsers
     displayName: 'Build Users Service'
+    condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'users/*'))
     steps:
       - template: template-pipeline.yml
         parameters:
@@ -34,6 +37,7 @@ jobs:
 
   - job: BuildPosts
     displayName: 'Build Posts Service'
+    condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'posts/*'))
     steps:
       - template: template-pipeline.yml
         parameters:
@@ -43,7 +47,8 @@ jobs:
           imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-posts:$(Build.BuildId)'
 
   - job: BuildComments
-    displayName: 'Build Posts Service'
+    displayName: 'Build Comments Service'
+    condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'comments/*'))
     steps:
       - template: template-pipeline.yml
         parameters:
