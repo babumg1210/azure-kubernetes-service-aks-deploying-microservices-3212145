@@ -12,10 +12,23 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  # Initialize a variable to track which service should be built
+  serviceToBuild: ''
+
 jobs:
+  - job: DetermineService
+    displayName: 'Determine Service to Build'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - script: |
+          echo "##vso[task.setvariable variable=serviceToBuild]$(git diff --name-only HEAD^ HEAD | grep -E '^(ui|users|posts|comments)/' | cut -d'/' -f1 | uniq | head -n 1)"
+        displayName: 'Determine Changed Service'
+
   - job: BuildUI
     displayName: 'Build UI Service'
-    condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'ui/'))
+    condition: and(succeeded(), eq(variables['serviceToBuild'], 'ui'))
     steps:
       - template: template-pipeline.yml
         parameters:
@@ -26,7 +39,7 @@ jobs:
 
   - job: BuildUsers
     displayName: 'Build Users Service'
-    condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'users/'))
+    condition: and(succeeded(), eq(variables['serviceToBuild'], 'users'))
     steps:
       - template: template-pipeline.yml
         parameters:
@@ -37,7 +50,7 @@ jobs:
 
   - job: BuildPosts
     displayName: 'Build Posts Service'
-    condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'posts/'))
+    condition: and(succeeded(), eq(variables['serviceToBuild'], 'posts'))
     steps:
       - template: template-pipeline.yml
         parameters:
@@ -48,7 +61,7 @@ jobs:
 
   - job: BuildComments
     displayName: 'Build Comments Service'
-    condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'comments/'))
+    condition: and(succeeded(), eq(variables['serviceToBuild'], 'comments'))
     steps:
       - template: template-pipeline.yml
         parameters:
