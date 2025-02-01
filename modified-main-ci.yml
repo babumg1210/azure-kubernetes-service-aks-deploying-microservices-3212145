@@ -41,24 +41,32 @@ jobs:
                   echo "Detected changes in: $changed_service"
                   serviceToBuildTrimmed=$(echo "$changed_service" | xargs)
                   echo "##vso[task.setvariable variable=serviceToBuild;]$serviceToBuildTrimmed"
+                  echo "##vso[task.setvariable variable=serviceToBuild;isOutput=true;]$serviceToBuildTrimmed"
               fi
           fi
         displayName: 'Determine Changed Service'
 
       - script: |
           echo "Service to build set to: $(serviceToBuild)"
+          echo "Current build ID: $(Build.BuildId)"
+          echo "Current repository: $(Build.Repository.Name)"
+          echo "Current branch: $(Build.SourceBranchName)"
         displayName: 'Debug Service to Build'
+
+    # Job output variables
+    outputs:
+      serviceToBuildOutput: $(serviceToBuild)
 
   - job: BuildComments
     displayName: 'Build Comments Service'
     dependsOn: DetermineService
-    condition: and(succeeded(), eq(variables['serviceToBuild'], 'comments'))
+    condition: and(succeeded(), eq(dependencies.DetermineService.outputs['DetermineService.serviceToBuildOutput'], 'comments'))
     pool:
       vmImage: 'ubuntu-latest'
     steps:
       - script: |
-          echo "Service to build: $(serviceToBuild)"
-        displayName: 'Debug Service to Build'
+          echo "Service to build in BuildComments: $(serviceToBuild)"
+        displayName: 'Debug Service to Build Comments'
       - template: template-pipeline.yml
         parameters:
           microservice: 'comments'
@@ -69,13 +77,13 @@ jobs:
   - job: BuildPosts
     displayName: 'Build Posts Service'
     dependsOn: DetermineService
-    condition: and(succeeded(), eq(variables['serviceToBuild'], 'posts'))
+    condition: and(succeeded(), eq(dependencies.DetermineService.outputs['DetermineService.serviceToBuildOutput'], 'posts'))
     pool:
       vmImage: 'ubuntu-latest'
     steps:
       - script: |
-          echo "Service to build: $(serviceToBuild)"
-        displayName: 'Debug Service to Build'
+          echo "Service to build in BuildPosts: $(serviceToBuild)"
+        displayName: 'Debug Service to Build Posts'
       - template: template-pipeline.yml
         parameters:
           microservice: 'posts'
@@ -86,13 +94,13 @@ jobs:
   - job: BuildUsers
     displayName: 'Build Users Service'
     dependsOn: DetermineService
-    condition: and(succeeded(), eq(variables['serviceToBuild'], 'users'))
+    condition: and(succeeded(), eq(dependencies.DetermineService.outputs['DetermineService.serviceToBuildOutput'], 'users'))
     pool:
       vmImage: 'ubuntu-latest'
     steps:
       - script: |
-          echo "Service to build: $(serviceToBuild)"
-        displayName: 'Debug Service to Build'
+          echo "Service to build in BuildUsers: $(serviceToBuild)"
+        displayName: 'Debug Service to Build Users'
       - template: template-pipeline.yml
         parameters:
           microservice: 'users'
@@ -103,13 +111,13 @@ jobs:
   - job: BuildUI
     displayName: 'Build UI Service'
     dependsOn: DetermineService
-    condition: and(succeeded(), eq(variables['serviceToBuild'], 'ui'))
+    condition: and(succeeded(), eq(dependencies.DetermineService.outputs['DetermineService.serviceToBuildOutput'], 'ui'))
     pool:
       vmImage: 'ubuntu-latest'
     steps:
       - script: |
-          echo "Service to build: $(serviceToBuild)"
-        displayName: 'Debug Service to Build'
+          echo "Service to build in BuildUI: $(serviceToBuild)"
+        displayName: 'Debug Service to Build UI'
       - template: template-pipeline.yml
         parameters:
           microservice: 'ui'
