@@ -41,3 +41,13 @@ jobs:
           dockerfilePath: 'posts/Dockerfile'
           azureSubscription: 'test-aks-application12'
           imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-posts:$(Build.BuildId)'
+
+  - job: BuildComments
+    displayName: 'Build Posts Service'
+    steps:
+      - template: template-pipeline.yml
+        parameters:
+          microservice: 'comments'
+          dockerfilePath: 'comments/Dockerfile'
+          azureSubscription: 'test-aks-application12'
+          imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-comments:$(Build.BuildId)'
