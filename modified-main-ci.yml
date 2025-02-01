@@ -48,23 +48,20 @@ jobs:
 
       - script: |
           echo "Service to build set to: $(serviceToBuild)"
-          echo "##vso[task.setvariable variable=serviceToBuildFromJob;isOutput=true]$(serviceToBuild)"
-          echo "Current build ID: $(Build.BuildId)"
-          echo "Current repository: $(Build.Repository.Name)"
-          echo "Current branch: $(Build.SourceBranchName)"
         displayName: 'Debug Service to Build'
 
   - job: BuildComments
     displayName: 'Build Comments Service'
     dependsOn: DetermineService
-    condition: eq(dependencies.DetermineService.outputs['DetermineService.serviceToBuildFromJob'], 'comments')
+    condition: eq(dependencies.DetermineService.outputs['DetermineService.serviceToBuild'], 'comments')
     pool:
       vmImage: 'ubuntu-latest'
     steps:
       - script: |
-          echo "Service to build in BuildComments: $(serviceToBuild)"
-          echo "Service to build from job output: $(dependencies.DetermineService.outputs['DetermineService.serviceToBuildFromJob'])"
-        displayName: 'Debug Service to Build Comments'
+          echo "Building Comments Service..."
+          # Add your build commands here
+        displayName: 'Build Comments Service'
+
       - template: template-pipeline.yml
         parameters:
           microservice: 'comments'
@@ -75,14 +72,15 @@ jobs:
   - job: BuildPosts
     displayName: 'Build Posts Service'
     dependsOn: DetermineService
-    condition: eq(dependencies.DetermineService.outputs['DetermineService.serviceToBuildFromJob'], 'posts')
+    condition: eq(dependencies.DetermineService.outputs['DetermineService.serviceToBuild'], 'posts')
     pool:
       vmImage: 'ubuntu-latest'
     steps:
       - script: |
-          echo "Service to build in BuildPosts: $(serviceToBuild)"
-          echo "Service to build from job output: $(dependencies.DetermineService.outputs['DetermineService.serviceToBuildFromJob'])"
-        displayName: 'Debug Service to Build Posts'
+          echo "Building Posts Service..."
+          # Add your build commands here
+        displayName: 'Build Posts Service'
+
       - template: template-pipeline.yml
         parameters:
           microservice: 'posts'
@@ -93,14 +91,15 @@ jobs:
   - job: BuildUsers
     displayName: 'Build Users Service'
     dependsOn: DetermineService
-    condition: eq(dependencies.DetermineService.outputs['DetermineService.serviceToBuildFromJob'], 'users')
+    condition: eq(dependencies.DetermineService.outputs['DetermineService.serviceToBuild'], 'users')
     pool:
       vmImage: 'ubuntu-latest'
     steps:
       - script: |
-          echo "Service to build in BuildUsers: $(serviceToBuild)"
-          echo "Service to build from job output: $(dependencies.DetermineService.outputs['DetermineService.serviceToBuildFromJob'])"
-        displayName: 'Debug Service to Build Users'
+          echo "Building Users Service..."
+          # Add your build commands here
+        displayName: 'Build Users Service'
+
       - template: template-pipeline.yml
         parameters:
           microservice: 'users'
@@ -111,14 +110,15 @@ jobs:
   - job: BuildUI
     displayName: 'Build UI Service'
     dependsOn: DetermineService
-    condition: eq(dependencies.DetermineService.outputs['DetermineService.serviceToBuildFromJob'], 'ui')
+    condition: eq(dependencies.DetermineService.outputs['DetermineService.serviceToBuild'], 'ui')
     pool:
       vmImage: 'ubuntu-latest'
     steps:
       - script: |
-          echo "Service to build in BuildUI: $(serviceToBuild)"
-          echo "Service to build from job output: $(dependencies.DetermineService.outputs['DetermineService.serviceToBuildFromJob'])"
-        displayName: 'Debug Service to Build UI'
+          echo "Building UI Service..."
+          # Add your build commands here
+        displayName: 'Build UI Service'
+
       - template: template-pipeline.yml
         parameters:
           microservice: 'ui'
