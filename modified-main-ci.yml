@@ -32,6 +32,7 @@ jobs:
           else
               changed_files=$(git diff --name-only HEAD~1 HEAD)
               echo "Changed files: $changed_files"
+              # Ensure the paths are matching the correct service directories
               changed_service=$(echo "$changed_files" | grep -E '^(ui|users|posts|comments)/' | cut -d'/' -f1 | uniq | head -n 1)
               if [ -z "$changed_service" ]; then
                   echo "No relevant changes detected."
