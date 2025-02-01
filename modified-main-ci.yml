@@ -15,7 +15,7 @@ pool:
 jobs:
   - job: BuildUI
     displayName: 'Build UI Service'
-    condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'ui/*'))
+    condition: and(changed('ui/*'), not(startsWith(variables['Build.Reason'], 'PullRequest')))
     steps:
       - template: template-pipeline.yml
         parameters:
@@ -26,7 +26,7 @@ jobs:
 
   - job: BuildUsers
     displayName: 'Build Users Service'
-    condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'users/*'))
+    condition: and(changed('users/*'), not(startsWith(variables['Build.Reason'], 'PullRequest')))
     steps:
       - template: template-pipeline.yml
         parameters:
@@ -37,7 +37,7 @@ jobs:
 
   - job: BuildPosts
     displayName: 'Build Posts Service'
-    condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'posts/*'))
+    condition: and(changed('posts/*'), not(startsWith(variables['Build.Reason'], 'PullRequest')))
     steps:
       - template: template-pipeline.yml
         parameters:
@@ -48,7 +48,7 @@ jobs:
 
   - job: BuildComments
     displayName: 'Build Comments Service'
-    condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'comments/*'))
+    condition: and(changed('comments/*'), not(startsWith(variables['Build.Reason'], 'PullRequest')))
     steps:
       - template: template-pipeline.yml
         parameters:
