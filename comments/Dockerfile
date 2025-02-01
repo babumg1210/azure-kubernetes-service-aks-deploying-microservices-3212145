@@ -6,7 +6,7 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-# Run the application1
+# Run the application12
 FROM node:16-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV production
