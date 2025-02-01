@@ -28,7 +28,7 @@ jobs:
           echo "Checking for changes..."
           if [ $(git rev-list --count HEAD) -eq 1 ]; then
               echo "This is the first commit. No previous commit to compare."
-              echo "##vso[task.setvariable variable=serviceToBuild]none"
+              echo "##vso[task.setvariable variable=serviceToBuild;]none"
           else
               changed_files=$(git diff --name-only HEAD~1 HEAD)
               echo "Changed files: $changed_files"
@@ -36,7 +36,7 @@ jobs:
               changed_service=$(echo "$changed_files" | grep -E '^(ui|users|posts|comments)/' | cut -d'/' -f1 | uniq | head -n 1)
               if [ -z "$changed_service" ]; then
                   echo "No relevant changes detected."
-                  echo "##vso[task.setvariable variable=serviceToBuild]none"
+                  echo "##vso[task.setvariable variable=serviceToBuild;]none"
               else
                   echo "Detected changes in: $changed_service"
                   serviceToBuildTrimmed=$(echo "$changed_service" | xargs)
@@ -53,6 +53,8 @@ jobs:
     displayName: 'Build Comments Service'
     dependsOn: DetermineService
     condition: and(succeeded(), eq(variables['serviceToBuild'], 'comments'))
+    pool:
+      vmImage: 'ubuntu-latest'
     steps:
       - script: |
           echo "Service to build: $(serviceToBuild)"
@@ -63,3 +65,54 @@ jobs:
           dockerfilePath: 'comments/Dockerfile'
           azureSubscription: 'test-aks-application12'
           imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-comments:$(Build.BuildId)'
+
+  - job: BuildPosts
+    displayName: 'Build Posts Service'
+    dependsOn: DetermineService
+    condition: and(succeeded(), eq(variables['serviceToBuild'], 'posts'))
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - script: |
+          echo "Service to build: $(serviceToBuild)"
+        displayName: 'Debug Service to Build'
+      - template: template-pipeline.yml
+        parameters:
+          microservice: 'posts'
+          dockerfilePath: 'posts/Dockerfile'
+          azureSubscription: 'test-aks-application12'
+          imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-posts:$(Build.BuildId)'
+
+  - job: BuildUsers
+    displayName: 'Build Users Service'
+    dependsOn: DetermineService
+    condition: and(succeeded(), eq(variables['serviceToBuild'], 'users'))
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - script: |
+          echo "Service to build: $(serviceToBuild)"
+        displayName: 'Debug Service to Build'
+      - template: template-pipeline.yml
+        parameters:
+          microservice: 'users'
+          dockerfilePath: 'users/Dockerfile'
+          azureSubscription: 'test-aks-application12'
+          imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-users:$(Build.BuildId)'
+
+  - job: BuildUI
+    displayName: 'Build UI Service'
+    dependsOn: DetermineService
+    condition: and(succeeded(), eq(variables['serviceToBuild'], 'ui'))
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - script: |
+          echo "Service to build: $(serviceToBuild)"
+        displayName: 'Debug Service to Build'
+      - template: template-pipeline.yml
+        parameters:
+          microservice: 'ui'
+          dockerfilePath: 'ui/Dockerfile'
+          azureSubscription: 'test-aks-application12'
+          imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-ui:$(Build.BuildId)'
