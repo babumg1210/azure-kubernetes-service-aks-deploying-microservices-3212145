@@ -46,7 +46,7 @@ jobs:
         displayName: 'Determine Changed Service'
 
       - script: |
-          echo "Service to build: $(serviceToBuild)"
+          echo "Service to build set to: $(serviceToBuild)"
         displayName: 'Debug Service to Build'
 
   - job: BuildComments
