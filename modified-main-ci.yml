@@ -46,7 +46,7 @@ jobs:
         displayName: 'Determine Changed Service'
 
       - script: |
-          echo "Service to build set to: $(serviceToBuild)"
+          echo "Service to build set to: $changed_service"
           echo "##vso[task.setvariable variable=serviceToBuildFromJob;isOutput=true]$(serviceToBuild)"
           echo "Current build ID: $(Build.BuildId)"
           echo "Current repository: $(Build.Repository.Name)"
