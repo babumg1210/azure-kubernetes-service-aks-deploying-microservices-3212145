@@ -12,14 +12,12 @@ pool:
 jobs:
 - job: A
   steps:
-  # assume that MyTask generates an output variable called "MyVar"
-  # (you would learn that from the task's documentation)
-  - task: MyTask@1
-    name: ProduceVar  # because we're going to depend on it, we need to name the step
-- job: B
-  dependsOn: A
-  variables:
-    # map the output variable from A into this job
-    varFromA: $[ dependencies.A.outputs['ProduceVar.MyVar'] ]
-  steps:
-  - script: echo $(varFromA) # this step uses the mapped-in variable
+  - bash: |
+     echo "##vso[task.setvariable variable=myJobVar]this is the same job"
+  - bash: |
+     echo "##vso[task.setvariable variable=myOutputJobVar;isOutput=true]this is the same job too"
+    name: setOutput
+  - bash: |
+     echo $(myJobVar) 
+  - bash: |
+     echo $(setOutput.myOutputJobVar)
