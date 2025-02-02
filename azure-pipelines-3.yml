@@ -1,0 +1,25 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+jobs:
+- job: A
+  steps:
+  # assume that MyTask generates an output variable called "MyVar"
+  # (you would learn that from the task's documentation)
+  - task: MyTask@1
+    name: ProduceVar  # because we're going to depend on it, we need to name the step
+- job: B
+  dependsOn: A
+  variables:
+    # map the output variable from A into this job
+    varFromA: $[ dependencies.A.outputs['ProduceVar.MyVar'] ]
+  steps:
+  - script: echo $(varFromA) # this step uses the mapped-in variable
