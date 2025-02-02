@@ -47,6 +47,7 @@ jobs:
                   echo "Detected changes in: $changed_service"
                   echo "##vso[task.setvariable variable=serviceToBuild;isOutput=true;]$changed_service"
                   echo "ServiceToBuild variable set to: $changed_service"
+                  name:setOutput
               fi
           fi
         displayName: 'Determine Changed Service'
