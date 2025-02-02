@@ -57,7 +57,7 @@ jobs:
       vmImage: 'ubuntu-latest'
     variables:
       # Correctly reference the output variable from the DetermineService job
-      serviceToBuild: $[ dependencies.DetermineService.outputs['DetermineService.serviceToBuild'] ]  # Correct output reference
+      serviceToBuild: $[ dependencies.DetermineService.outputs['$changed_service.serviceToBuild'] ]  #   Correct output reference
     steps:
       - script: |
           echo "Service to build set to: $(serviceToBuild)"
