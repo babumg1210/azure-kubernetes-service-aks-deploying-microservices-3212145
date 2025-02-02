@@ -47,19 +47,20 @@ jobs:
                   echo "Detected changes in: $changed_service"
                   echo "##vso[task.setvariable variable=serviceToBuild;isOutput=true;]$changed_service"
                   echo "ServiceToBuild variable set to: $changed_service"
-                  name:setOutput
               fi
           fi
         displayName: 'Determine Changed Service'
+        name: setOutput  # Moved the name attribute to the correct position
 
       - bash: |
           echo "Service to build set to: $(setOutput.serviceToBuild)"
-          echo "##vso[task.setvariable variable=serviceToBuildFromJob;isOutput=true]$(setOutput.serviceToBuild)"
+          echo "##vso[task.setvariable variable=serviceToBuildFromJob;isOutput=true]$(serviceToBuild)"
           echo "Current build ID: $(Build.BuildId)"
           echo "Current repository: $(Build.Repository.Name)"
           echo "Current branch: $(Build.SourceBranchName)"
           echo "Final serviceToBuild: $(serviceToBuild)"
         displayName: 'Debug Service to Build'
+
 
   # - job: BuildService
   #   displayName: 'Build Detected Service'
