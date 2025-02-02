@@ -8,6 +8,7 @@ trigger:
       - 'users/*'
       - 'posts/*'
       - 'comments/*'
+      - 'posthub/*'
 
 pool:
   vmImage: ubuntu-latest
@@ -37,7 +38,7 @@ jobs:
               echo "Changed files: $changed_files"
 
               # Ensure the paths are matching the correct service directories
-              changed_service=$(echo "$changed_files" | grep -E '^(ui|users|posts|comments)/' | cut -d'/' -f1 | uniq | head -n 1)
+              changed_service=$(echo "$changed_files" | grep -E '^(ui|users|posts|comments|posthub)/' | cut -d'/' -f1 | uniq | head -n 1)
               echo "Detected service from changed files: $changed_service"
 
               if [ -z "$changed_service" ]; then
@@ -132,3 +133,21 @@ jobs:
           dockerfilePath: 'ui/Dockerfile'
           azureSubscription: 'test-aks-application12'
           imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-ui:$(Build.BuildId)'
+
+  - job: Buildposthub
+    displayName: 'Build posthub Service'
+    dependsOn: DetermineService
+    condition: and(succeeded(), eq(dependencies.DetermineService.outputs['setOutput.serviceToBuild'], 'posthub'))
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - script: |
+          echo "Service to build in BuildUI: $(dependencies.DetermineService.outputs['setOutput.serviceToBuild'])"
+          echo "Service to build from job output: $(dependencies.DetermineService.outputs['setOutput.serviceToBuild'])"
+        displayName: 'Debug Service to Build UI'
+      - template: template-pipeline.yml
+        parameters:
+          microservice: 'posthub'
+          dockerfilePath: 'posthub/Dockerfile'
+          azureSubscription: 'test-aks-application12'
+          imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-posthub:$(Build.BuildId)'
