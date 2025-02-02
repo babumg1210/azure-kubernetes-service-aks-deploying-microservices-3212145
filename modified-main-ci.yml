@@ -50,9 +50,17 @@ jobs:
           fi
         displayName: 'Determine Changed Service'
 
+  - job: BuildService
+    displayName: 'Build Detected Service'
+    dependsOn: DetermineService
+    pool:
+      vmImage: 'ubuntu-latest'
+    variables:
+      serviceToBuild: $[ dependencies.DetermineService.outputs['serviceToBuild'] ]
+    steps:
       - script: |
           echo "Service to build set to: $(serviceToBuild)"
-          echo "##vso[task.setvariable variable=serviceToBuildFromJob;isOutput=true]$(serviceToBuild)"
+          echo "##vso[task.setvariable variable=finalServiceToBuild;isOutput=true]$(serviceToBuild)"
           echo "Current build ID: $(Build.BuildId)"
           echo "Current repository: $(Build.Repository.Name)"
           echo "Current branch: $(Build.SourceBranchName)"
