@@ -54,27 +54,81 @@ jobs:
 
       - bash: |
           echo "Service to build set to: $(setOutput.serviceToBuild)"
-          echo "##vso[task.setvariable variable=serviceToBuildFromJob;isOutput=true]$(serviceToBuild)"
+          echo "##vso[task.setvariable variable=serviceToBuildFromJob;isOutput=true]$(setOutput.serviceToBuild)"
           echo "Current build ID: $(Build.BuildId)"
           echo "Current repository: $(Build.Repository.Name)"
           echo "Current branch: $(Build.SourceBranchName)"
-          echo "Final serviceToBuild: $(serviceToBuild)"
+          echo "Final serviceToBuild: $(setOutput.serviceToBuild)"
         displayName: 'Debug Service to Build'
 
-
-  - job: BuildService
-    displayName: 'Build Detected Service'
+  - job: BuildComments
+    displayName: 'Build Comments Service'
     dependsOn: DetermineService
+    condition: and(succeeded(), eq(dependencies.DetermineService.outputs['setOutput.serviceToBuild'], 'comments'))
     pool:
       vmImage: 'ubuntu-latest'
-    variables:
-      # Correctly reference the output variable from the DetermineService job
-      setOutput.serviceToBuild : $[ dependencies.DetermineService.outputs['setOutput.serviceToBuild'] ]  #   Correct output reference
     steps:
       - script: |
-          echo "Service to build set to: $(setOutput.serviceToBuild)"
-          echo "Current build ID: $(Build.BuildId)"
-          echo "Current repository: $(Build.Repository.Name)"
-          echo "Current branch: $(Build.SourceBranchName)"
-          echo "Final serviceToBuild: $(serviceToBuild)"
-        displayName: 'Debug Service to Build'
+          echo "Service to build in BuildComments: $(dependencies.DetermineService.outputs['setOutput.serviceToBuild'])"
+          echo "Service to build from job output: $(dependencies.DetermineService.outputs['setOutput.serviceToBuild'])"
+        displayName: 'Debug Service to Build Comments'
+      - template: template-pipeline.yml
+        parameters:
+          microservice: 'comments'
+          dockerfilePath: 'comments/Dockerfile'
+          azureSubscription: 'test-aks-application12'
+          imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-comments:$(Build.BuildId)'
+
+  - job: BuildPosts
+    displayName: 'Build Posts Service'
+    dependsOn: DetermineService
+    condition: and(succeeded(), eq(dependencies.DetermineService.outputs['setOutput.serviceToBuild'], 'posts'))
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - script: |
+          echo "Service to build in BuildPosts: $(dependencies.DetermineService.outputs['setOutput.serviceToBuild'])"
+          echo "Service to build from job output: $(dependencies.DetermineService.outputs['setOutput.serviceToBuild'])"
+        displayName: 'Debug Service to Build Posts'
+      - template: template-pipeline.yml
+        parameters:
+          microservice: 'posts'
+          dockerfilePath: 'posts/Dockerfile'
+          azureSubscription: 'test-aks-application12'
+          imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-posts:$(Build.BuildId)'
+
+  - job: BuildUsers
+    displayName: 'Build Users Service'
+    dependsOn: DetermineService
+    condition: and(succeeded(), eq(dependencies.DetermineService.outputs['setOutput.serviceToBuild'], 'users'))
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - script: |
+          echo "Service to build in BuildUsers: $(dependencies.DetermineService.outputs['setOutput.serviceToBuild'])"
+          echo "Service to build from job output: $(dependencies.DetermineService.outputs['setOutput.serviceToBuild'])"
+        displayName: 'Debug Service to Build Users'
+      - template: template-pipeline.yml
+        parameters:
+          microservice: 'users'
+          dockerfilePath: 'users/Dockerfile'
+          azureSubscription: 'test-aks-application12'
+          imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-users:$(Build.BuildId)'
+
+  - job: BuildUI
+    displayName: 'Build UI Service'
+    dependsOn: DetermineService
+    condition: and(succeeded(), eq(dependencies.DetermineService.outputs['setOutput.serviceToBuild'], 'ui'))
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - script: |
+          echo "Service to build in BuildUI: $(dependencies.DetermineService.outputs['setOutput.serviceToBuild'])"
+          echo "Service to build from job output: $(dependencies.DetermineService.outputs['setOutput.serviceToBuild'])"
+        displayName: 'Debug Service to Build UI'
+      - template: template-pipeline.yml
+        parameters:
+          microservice: 'ui'
+          dockerfilePath: 'ui/Dockerfile'
+          azureSubscription: 'test-aks-application12'
+          imageName: '$(Build.Repository.Name)-$(Build.SourceBranchName)-ui:$(Build.BuildId)'
