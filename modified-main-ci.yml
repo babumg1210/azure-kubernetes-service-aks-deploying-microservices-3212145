@@ -56,11 +56,10 @@ jobs:
     pool:
       vmImage: 'ubuntu-latest'
     variables:
-      serviceToBuild: $[ dependencies.DetermineService.outputs['serviceToBuild'] ]
+      serviceToBuild: $[ dependencies.DetermineService.outputs['DetermineService.serviceToBuild'] ]
     steps:
       - script: |
           echo "Service to build set to: $(serviceToBuild)"
-          echo "##vso[task.setvariable variable=finalServiceToBuild;isOutput=true]$(serviceToBuild)"
           echo "Current build ID: $(Build.BuildId)"
           echo "Current repository: $(Build.Repository.Name)"
           echo "Current branch: $(Build.SourceBranchName)"
