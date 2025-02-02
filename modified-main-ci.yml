@@ -62,19 +62,19 @@ jobs:
         displayName: 'Debug Service to Build'
 
 
-  # - job: BuildService
-  #   displayName: 'Build Detected Service'
-  #   dependsOn: DetermineService
-  #   pool:
-  #     vmImage: 'ubuntu-latest'
-  #   variables:
-  #     # Correctly reference the output variable from the DetermineService job
-  #     serviceToBuild: $[ dependencies.DetermineService.outputs['$changed_service.serviceToBuild'] ]  #   Correct output reference
-  #   steps:
-  #     - script: |
-  #         echo "Service to build set to: $(serviceToBuild)"
-  #         echo "Current build ID: $(Build.BuildId)"
-  #         echo "Current repository: $(Build.Repository.Name)"
-  #         echo "Current branch: $(Build.SourceBranchName)"
-  #         echo "Final serviceToBuild: $(serviceToBuild)"
-  #       displayName: 'Debug Service to Build'
+  - job: BuildService
+    displayName: 'Build Detected Service'
+    dependsOn: DetermineService
+    pool:
+      vmImage: 'ubuntu-latest'
+    variables:
+      # Correctly reference the output variable from the DetermineService job
+      setOutput.serviceToBuild : $[ dependencies.DetermineService.outputs['setOutput.serviceToBuild'] ]  #   Correct output reference
+    steps:
+      - script: |
+          echo "Service to build set to: $(setOutput.serviceToBuild)"
+          echo "Current build ID: $(Build.BuildId)"
+          echo "Current repository: $(Build.Repository.Name)"
+          echo "Current branch: $(Build.SourceBranchName)"
+          echo "Final serviceToBuild: $(serviceToBuild)"
+        displayName: 'Debug Service to Build'
